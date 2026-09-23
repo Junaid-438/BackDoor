@@ -27,8 +27,14 @@ BackDoor was developed as a practical cybersecurity project to explore authentic
 
 ## Running the Project
 
+
+
 The project runs locally using Python, Flask, and MySQL.
 
 ---
 
 Built as a learning project to develop practical cybersecurity and software development skills.
+
+## Project Interface
+
+![BackDoor Interface](BackDoor%20Interface.png)
