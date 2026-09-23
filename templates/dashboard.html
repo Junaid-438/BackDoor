@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BackDoor — Cyber Command Center</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #070809;
+            --panel: rgba(22,24,27,.68);
+            --border: rgba(255,255,255,.09);
+
+            --text: #f1f1f3;
+            --white: #ffffff;
+            --light: #d6d6d9;
+            --muted: #999ba0;
+            --dim: #707278;
+
+            --green: #8ea99a;
+            --red: #b88686;
+            --yellow: #aaa083;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 15% 0%,
+                    rgba(255,255,255,.025),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 90% 70%,
+                    rgba(255,255,255,.018),
+                    transparent 30%
+                ),
+                var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "Segoe UI",
+                sans-serif;
+
+            overflow-x: hidden;
+        }
+
+        /* =========================
+           SCROLLBAR
+        ========================= */
+
+        ::-webkit-scrollbar {
+            width: 9px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #090a0c;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #4a4d52,
+                    #202226
+                );
+
+            border: 2px solid #090a0c;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #62656b;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+
+            height: 76px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 32px;
+
+            background: rgba(8,9,10,.82);
+
+            border-bottom:
+                1px solid rgba(255,255,255,.08);
+
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-mark {
+            width: 39px;
+            height: 39px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background: rgba(255,255,255,.06);
+
+            border:
+                1px solid rgba(255,255,255,.10);
+
+            color: #eeeeee;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            letter-spacing: 1px;
+        }
+
+        .brand-text h1 {
+            color: #f4f4f5;
+
+            font-size: 16px;
+            font-weight: 700;
+
+            letter-spacing: 3px;
+        }
+
+        .brand-text p {
+            margin-top: 4px;
+
+            color: #777a80;
+
+            font-size: 9px;
+            letter-spacing: 1.5px;
+
+            text-transform: uppercase;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .online {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            color: #b7babf;
+
+            font-size: 10px;
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #8fa59a;
+
+            box-shadow:
+                0 0 10px rgba(143,165,154,.35);
+        }
+
+        .user-pill {
+            padding: 9px 14px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,255,255,.045);
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            color: #d0d1d4;
+
+            font-size: 11px;
+        }
+
+        .logout {
+            padding: 9px 14px;
+
+            border-radius: 11px;
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            background: transparent;
+
+            color: #a6a8ad;
+
+            font-size: 10px;
+
+            text-decoration: none;
+            letter-spacing: .8px;
+
+            text-transform: uppercase;
+
+            transition: .2s;
+        }
+
+        .logout:hover {
+            color: white;
+
+            background:
+                rgba(255,255,255,.06);
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            width: min(1500px, calc(100% - 50px));
+
+            margin: 0 auto;
+
+            padding: 32px 0 60px;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+
+            margin-bottom: 28px;
+        }
+
+        .hero h2 {
+            color: #f4f4f5;
+
+            font-size: 30px;
+            font-weight: 600;
+
+            letter-spacing: -.8px;
+        }
+
+        .hero p {
+            margin-top: 9px;
+
+            color: #9a9ca1;
+
+            font-size: 12px;
+        }
+
+        .system-state {
+            padding: 12px 16px;
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            color: #b0b2b6;
+
+            font-size: 10px;
+            letter-spacing: 1.2px;
+
+            text-transform: uppercase;
+        }
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0,1fr));
+
+            gap: 14px;
+
+            margin-bottom: 14px;
+        }
+
+        .stat-card {
+            position: relative;
+
+            min-height: 145px;
+
+            padding: 21px;
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.055),
+                    rgba(255,255,255,.018)
+                );
+
+            border:
+                1px solid rgba(255,255,255,.075);
+
+            box-shadow:
+                inset 0 1px 1px rgba(255,255,255,.035),
+                0 20px 50px rgba(0,0,0,.15);
+
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 130px;
+            height: 130px;
+
+            border-radius: 50%;
+
+            right: -65px;
+            bottom: -80px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            filter: blur(5px);
+        }
+
+        .stat-label {
+            color: #a2a4a9;
+
+            font-size: 10px;
+            font-weight: 500;
+
+            letter-spacing: 1.3px;
+
+            text-transform: uppercase;
+        }
+
+        .stat-number {
+            margin-top: 17px;
+
+            color: #ffffff;
+
+            font-size: 36px;
+            font-weight: 500;
+
+            letter-spacing: -1px;
+        }
+
+        .stat-info {
+            margin-top: 8px;
+
+            color: #8b8e94;
+
+            font-size: 10px;
+        }
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .grid {
+            display: grid;
+
+            grid-template-columns:
+                1.35fr .65fr;
+
+            gap: 14px;
+
+            margin-bottom: 14px;
+        }
+
+        .panel {
+            border-radius: 23px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.048),
+                    rgba(255,255,255,.018)
+                );
+
+            border:
+                1px solid rgba(255,255,255,.075);
+
+            box-shadow:
+                inset 0 1px 1px rgba(255,255,255,.035),
+                0 20px 50px rgba(0,0,0,.16);
+
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+
+            overflow: hidden;
+        }
+
+        .panel-header {
+            min-height: 62px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 20px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
+        }
+
+        .panel-title {
+            color: #eeeeef;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            letter-spacing: 1.1px;
+
+            text-transform: uppercase;
+        }
+
+        .panel-subtitle {
+            margin-top: 4px;
+
+            color: #898c92;
+
+            font-size: 9px;
+            letter-spacing: .8px;
+        }
+
+        /* =========================
+           RADAR
+        ========================= */
+
+        .radar-area {
+            min-height: 320px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            position: relative;
+        }
+
+        .radar {
+            width: 245px;
+            height: 245px;
+
+            border-radius: 50%;
+
+            position: relative;
+
+            background:
+                repeating-radial-gradient(
+                    circle,
+                    transparent 0 38px,
+                    rgba(255,255,255,.055) 39px 40px
+                );
+
+            border:
+                1px solid rgba(255,255,255,.09);
+        }
+
+        .radar::before {
+            content: "";
+
+            position: absolute;
+
+            left: 50%;
+            top: 0;
+            bottom: 0;
+
+            width: 1px;
+
+            background:
+                rgba(255,255,255,.055);
+        }
+
+        .radar::after {
+            content: "";
+
+            position: absolute;
+
+            top: 50%;
+            left: 0;
+            right: 0;
+
+            height: 1px;
+
+            background:
+                rgba(255,255,255,.055);
+        }
+
+        .radar-sweep {
+            position: absolute;
+
+            width: 50%;
+            height: 50%;
+
+            left: 50%;
+            top: 0;
+
+            transform-origin: bottom left;
+
+            background:
+                linear-gradient(
+                    45deg,
+                    transparent 45%,
+                    rgba(255,255,255,.10)
+                );
+
+            animation:
+                sweep 4s linear infinite;
+        }
+
+        @keyframes sweep {
+
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+        .radar-center {
+            position: absolute;
+
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            left: calc(50% - 4px);
+            top: calc(50% - 4px);
+
+            background: #d5d5d5;
+
+            box-shadow:
+                0 0 14px rgba(255,255,255,.30);
+        }
+
+        .threat-dot {
+            position: absolute;
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #c2c2c2;
+
+            box-shadow:
+                0 0 12px rgba(255,255,255,.25);
+        }
+
+        .threat-dot.one {
+            top: 28%;
+            left: 68%;
+        }
+
+        .threat-dot.two {
+            top: 65%;
+            left: 31%;
+        }
+
+        .threat-dot.three {
+            top: 41%;
+            left: 30%;
+        }
+
+        /* =========================
+           SECURITY SCORE
+        ========================= */
+
+        .score {
+            min-height: 320px;
+
+            padding: 28px 24px;
+        }
+
+        .score-ring {
+            width: 180px;
+            height: 180px;
+
+            margin: 15px auto 20px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                radial-gradient(
+                    circle,
+                    #111315 57%,
+                    transparent 58%
+                ),
+                conic-gradient(
+                    #858b8e 0deg,
+                    #858b8e 274deg,
+                    rgba(255,255,255,.06) 274deg
+                );
+
+            position: relative;
+        }
+
+        .score-ring::after {
+            content: "";
+
+            position: absolute;
+
+            inset: 12px;
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(255,255,255,.05);
+        }
+
+        .score-number {
+            text-align: center;
+
+            position: relative;
+            z-index: 2;
+        }
+
+        .score-number strong {
+            display: block;
+
+            color: #ffffff;
+
+            font-size: 40px;
+            font-weight: 500;
+        }
+
+        .score-number span {
+            color: #9a9ca1;
+
+            font-size: 9px;
+            letter-spacing: 1.2px;
+
+            text-transform: uppercase;
+        }
+
+        .score-status {
+            text-align: center;
+
+            color: #b2b4b8;
+
+            font-size: 10px;
+            font-weight: 500;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+        /* =========================
+           USER SECURITY TABLE
+        ========================= */
+
+        .table-panel {
+            margin-bottom: 14px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 15px 18px;
+
+            text-align: left;
+
+            color: #92959b;
+
+            font-size: 9px;
+            font-weight: 600;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
+
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 15px 18px;
+
+            color: #d4d5d8;
+
+            font-size: 12px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.045);
+
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .username {
+            color: #ffffff;
+
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 6px 9px;
+
+            border-radius: 8px;
+
+            font-size: 8px;
+            font-weight: 600;
+
+            letter-spacing: .7px;
+
+            text-transform: uppercase;
+        }
+
+        .badge.active {
+            background:
+                rgba(140,165,150,.10);
+
+            color: #a9c0b3;
+
+            border:
+                1px solid rgba(140,165,150,.15);
+        }
+
+        .badge.blocked {
+            background:
+                rgba(165,130,130,.10);
+
+            color: #d0a0a0;
+
+            border:
+                1px solid rgba(165,130,130,.15);
+        }
+
+        /* =========================
+           LOWER GRID
+        ========================= */
+
+        .lower-grid {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 14px;
+        }
+
+        /* =========================
+           LIVE EVENTS
+        ========================= */
+
+        .event-list {
+            max-height: 390px;
+
+            overflow-y: auto;
+        }
+
+        .event {
+            display: grid;
+
+            grid-template-columns:
+                8px 1fr auto;
+
+            gap: 12px;
+
+            padding: 17px 19px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.045);
+        }
+
+        .event:last-child {
+            border-bottom: none;
+        }
+
+        .event-dot {
+            width: 7px;
+            height: 7px;
+
+            margin-top: 5px;
+
+            border-radius: 50%;
+
+            background: #999da2;
+        }
+
+        .event-dot.alert {
+            background: #b58c8c;
+
+            box-shadow:
+                0 0 9px rgba(181,140,140,.20);
+        }
+
+        .event-dot.safe {
+            background: #91a99b;
+
+            box-shadow:
+                0 0 9px rgba(145,169,155,.20);
+        }
+
+        .event-title {
+            color: #ffffff;
+
+            font-size: 13px;
+            font-weight: 500;
+
+            line-height: 1.4;
+        }
+
+        .event-detail {
+            margin-top: 6px;
+
+            color: #d0d2d5;
+
+            font-size: 11px;
+
+            line-height: 1.4;
+        }
+
+        .event-time {
+            color: #b9bbc0;
+
+            font-size: 11px;
+
+            white-space: nowrap;
+
+            line-height: 1.4;
+        }
+
+        /* =========================
+           IP INTELLIGENCE
+        ========================= */
+
+        .ip-row {
+            display: grid;
+
+            grid-template-columns:
+                1fr 110px;
+
+            align-items: center;
+
+            padding: 16px 19px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.045);
+        }
+
+        .ip-address {
+            color: #f0f0f2;
+
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+
+            font-size: 12px;
+        }
+
+        .ip-count {
+            text-align: right;
+
+            color: #d0a0a0;
+
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* =========================
+           SYSTEM HEALTH
+        ========================= */
+
+        .health {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 8px;
+
+            padding: 19px;
+        }
+
+        .health-item {
+            padding: 16px 10px;
+
+            text-align: center;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            border:
+                1px solid rgba(255,255,255,.045);
+        }
+
+        .health-dot {
+            width: 7px;
+            height: 7px;
+
+            margin: 0 auto 9px;
+
+            border-radius: 50%;
+
+            background: #91a99b;
+
+            box-shadow:
+                0 0 8px rgba(145,169,155,.20);
+        }
+
+        .health-name {
+            color: #a0a3a8;
+
+            font-size: 8px;
+            font-weight: 500;
+
+            letter-spacing: .8px;
+
+            text-transform: uppercase;
+        }
+
+        .health-state {
+            margin-top: 6px;
+
+            color: #d1d3d6;
+
+            font-size: 10px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            margin-top: 28px;
+
+            display: flex;
+            justify-content: space-between;
+
+            color: #686b70;
+
+            font-size: 9px;
+
+            letter-spacing: .7px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media(max-width:1000px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+
+            .grid,
+            .lower-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media(max-width:650px) {
+
+            .topbar {
+                padding: 0 17px;
+            }
+
+            .brand-text p,
+            .online {
+                display: none;
+            }
+
+            .user-pill {
+                display: none;
+            }
+
+            .main {
+                width: calc(100% - 25px);
+
+                padding-top: 22px;
+            }
+
+            .hero {
+                align-items: start;
+
+                flex-direction: column;
+
+                gap: 15px;
+            }
+
+            .stats {
+                grid-template-columns:
+                    1fr 1fr;
+
+                gap: 9px;
+            }
+
+            .stat-card {
+                min-height: 125px;
+
+                padding: 16px;
+            }
+
+            .stat-number {
+                font-size: 29px;
+            }
+
+            .stat-info {
+                font-size: 9px;
+            }
+
+            .health {
+                grid-template-columns:
+                    1fr 1fr;
+            }
+
+            .event {
+                grid-template-columns:
+                    7px 1fr;
+
+                gap: 10px;
+            }
+
+            .event-time {
+                grid-column: 2;
+
+                margin-top: -3px;
+
+                color: #aeb0b5;
+            }
+
+            .footer {
+                flex-direction: column;
+
+                gap: 7px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         TOP BAR
+    ========================= -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                BD
+            </div>
+
+            <div class="brand-text">
+
+                <h1>BACKDOOR</h1>
+
+                <p>
+                    Cyber Security Operations Center
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="top-right">
+
+            <div class="online">
+
+                <span class="online-dot"></span>
+
+                System Online
+
+            </div>
+
+            <div class="user-pill">
+                {{ username }}
+            </div>
+
+            <a
+                href="/logout"
+                class="logout"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main class="main">
+
+        <!-- =========================
+             HERO
+        ========================= -->
+
+        <section class="hero">
+
+            <div>
+
+                <h2>
+                    Cyber Command Center
+                </h2>
+
+                <p>
+                    Real-time security monitoring and threat intelligence
+                </p>
+
+            </div>
+
+            <div class="system-state">
+                Monitoring Active
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             STATISTICS
+        ========================= -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Total Users
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="totalUsers"
+                >
+                    —
+                </div>
+
+                <div class="stat-info">
+                    Registered security identities
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Failed Logins
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="failedLogins"
+                >
+                    —
+                </div>
+
+                <div class="stat-info">
+                    Detected authentication failures
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Security Alerts
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="securityAlerts"
+                >
+                    —
+                </div>
+
+                <div class="stat-info">
+                    Recorded security events
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Blocked Accounts
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="blockedAccounts"
+                >
+                    —
+                </div>
+
+                <div class="stat-info">
+                    Accounts restricted by system
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             RADAR + SECURITY SCORE
+        ========================= -->
+
+        <section class="grid">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <div class="panel-title">
+                            Threat Radar
+                        </div>
+
+                        <div class="panel-subtitle">
+                            LIVE SECURITY ACTIVITY
+                        </div>
+
+                    </div>
+
+                    <div class="panel-subtitle">
+                        ACTIVE
+                    </div>
+
+                </div>
+
+
+                <div class="radar-area">
+
+                    <div class="radar">
+
+                        <div class="radar-sweep"></div>
+
+                        <div class="radar-center"></div>
+
+                        <div class="threat-dot one"></div>
+
+                        <div class="threat-dot two"></div>
+
+                        <div class="threat-dot three"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <div class="panel-title">
+                            Threat Assessment
+                        </div>
+
+                        <div class="panel-subtitle">
+                            SECURITY STATUS
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="score">
+
+                    <div class="score-ring">
+
+                        <div class="score-number">
+
+                            <strong id="securityScore">
+                                —
+                            </strong>
+
+                            <span>
+                                Security Index
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="score-status"
+                        id="securityStatus"
+                    >
+                        Calculating
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             USER SECURITY
+        ========================= -->
+
+        <section class="panel table-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="panel-title">
+                        User Security
+                    </div>
+
+                    <div class="panel-subtitle">
+                        ACCOUNT MONITORING
+                    </div>
+
+                </div>
+
+                <div
+                    class="panel-subtitle"
+                    id="userCount"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                User
+                            </th>
+
+                            <th>
+                                Email
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Failed Attempts
+                            </th>
+
+                            <th>
+                                Last Failed IP
+                            </th>
+
+                            <th>
+                                Created
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="usersTable">
+
+                        <tr>
+
+                            <td colspan="6">
+                                Loading security data...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             EVENTS + IP INTELLIGENCE
+        ========================= -->
+
+        <section class="lower-grid">
+
+
+            <!-- LIVE EVENTS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <div class="panel-title">
+                            Live Security Events
+                        </div>
+
+                        <div class="panel-subtitle">
+                            RECENT ACTIVITY
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="event-list"
+                    id="eventsList"
+                >
+
+                    <div class="event">
+
+                        <div class="event-dot"></div>
+
+                        <div>
+
+                            <div class="event-title">
+                                Loading events
+                            </div>
+
+                            <div class="event-detail">
+                                Connecting to security monitor
+                            </div>
+
+                        </div>
+
+                        <div class="event-time">
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- IP INTELLIGENCE -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <div class="panel-title">
+                            IP Intelligence
+                        </div>
+
+                        <div class="panel-subtitle">
+                            SUSPICIOUS SOURCES
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="panel-subtitle"
+                        id="suspiciousCount"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div id="ipList">
+
+                    <div class="ip-row">
+
+                        <div class="ip-address">
+                            Loading...
+                        </div>
+
+                        <div class="ip-count">
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             SYSTEM HEALTH
+        ========================= -->
+
+        <section
+            class="panel"
+            style="margin-top:14px;"
+        >
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="panel-title">
+                        System Health
+                    </div>
+
+                    <div class="panel-subtitle">
+                        BACKDOOR INFRASTRUCTURE
+                    </div>
+
+                </div>
+
+                <div class="panel-subtitle">
+                    OPERATIONAL
+                </div>
+
+            </div>
+
+
+            <div class="health">
+
+
+                <div class="health-item">
+
+                    <div class="health-dot"></div>
+
+                    <div class="health-name">
+                        Database
+                    </div>
+
+                    <div class="health-state">
+                        ONLINE
+                    </div>
+
+                </div>
+
+
+                <div class="health-item">
+
+                    <div class="health-dot"></div>
+
+                    <div class="health-name">
+                        Authentication
+                    </div>
+
+                    <div class="health-state">
+                        ACTIVE
+                    </div>
+
+                </div>
+
+
+                <div class="health-item">
+
+                    <div class="health-dot"></div>
+
+                    <div class="health-name">
+                        Monitoring
+                    </div>
+
+                    <div class="health-state">
+                        ACTIVE
+                    </div>
+
+                </div>
+
+
+                <div class="health-item">
+
+                    <div class="health-dot"></div>
+
+                    <div class="health-name">
+                        API
+                    </div>
+
+                    <div class="health-state">
+                        ONLINE
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FOOTER
+        ========================= -->
+
+        <footer class="footer">
+
+            <span>
+                BACKDOOR SECURITY MONITORING SYSTEM
+            </span>
+
+            <span>
+                AUTO REFRESH: 5 SECONDS
+            </span>
+
+        </footer>
+
+    </main>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        /* =========================
+           HTML SAFETY
+        ========================= */
+
+        function escapeHtml(value) {
+
+            if (
+                value === null ||
+                value === undefined
+            ) {
+                return "—";
+            }
+
+            return String(value)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+        }
+
+
+        /* =========================
+           SECURITY SCORE
+        ========================= */
+
+        function calculateSecurityScore(data) {
+
+            const stats = data.stats;
+
+            let score = 100;
+
+
+            score -= Math.min(
+                stats.failed_logins * 2,
+                30
+            );
+
+
+            score -= Math.min(
+                stats.security_alerts * 5,
+                25
+            );
+
+
+            score -= Math.min(
+                stats.blocked_accounts * 7,
+                25
+            );
+
+
+            score -= Math.min(
+                stats.suspicious_ips * 5,
+                20
+            );
+
+
+            return Math.max(
+                0,
+                Math.min(
+                    100,
+                    score
+                )
+            );
+        }
+
+
+        function updateSecurityScore(data) {
+
+            const score =
+                calculateSecurityScore(data);
+
+
+            document.getElementById(
+                "securityScore"
+            ).textContent = score;
+
+
+            let status = "SECURE";
+
+
+            if (score < 75) {
+                status = "ELEVATED";
+            }
+
+
+            if (score < 50) {
+                status = "HIGH RISK";
+            }
+
+
+            if (score < 25) {
+                status = "CRITICAL";
+            }
+
+
+            document.getElementById(
+                "securityStatus"
+            ).textContent = status;
+        }
+
+
+        /* =========================
+           STATISTICS
+        ========================= */
+
+        function updateStats(data) {
+
+            const stats = data.stats;
+
+
+            document.getElementById(
+                "totalUsers"
+            ).textContent =
+                stats.total_users;
+
+
+            document.getElementById(
+                "failedLogins"
+            ).textContent =
+                stats.failed_logins;
+
+
+            document.getElementById(
+                "securityAlerts"
+            ).textContent =
+                stats.security_alerts;
+
+
+            document.getElementById(
+                "blockedAccounts"
+            ).textContent =
+                stats.blocked_accounts;
+
+
+            document.getElementById(
+                "userCount"
+            ).textContent =
+                stats.total_users + " USERS";
+
+
+            document.getElementById(
+                "suspiciousCount"
+            ).textContent =
+                stats.suspicious_ips + " FLAGGED";
+
+
+            updateSecurityScore(data);
+        }
+
+
+        /* =========================
+           USERS
+        ========================= */
+
+        function updateUsers(users) {
+
+            const table =
+                document.getElementById(
+                    "usersTable"
+                );
+
+
+            if (!users.length) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            No users found.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+
+            table.innerHTML =
+                users.map(user => {
+
+                    const statusClass =
+                        user.account_status === "Blocked"
+                            ? "blocked"
+                            : "active";
+
+
+                    return `
+
+                        <tr>
+
+                            <td class="username">
+                                ${escapeHtml(
+                                    user.username
+                                )}
+                            </td>
+
+
+                            <td>
+                                ${escapeHtml(
+                                    user.email
+                                )}
+                            </td>
+
+
+                            <td>
+
+                                <span
+                                    class="badge ${statusClass}"
+                                >
+                                    ${escapeHtml(
+                                        user.account_status
+                                    )}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+                                ${escapeHtml(
+                                    user.failed_attempts
+                                )}
+                            </td>
+
+
+                            <td>
+                                ${escapeHtml(
+                                    user.last_failed_ip
+                                )}
+                            </td>
+
+
+                            <td>
+                                ${escapeHtml(
+                                    user.created_at
+                                )}
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }).join("");
+        }
+
+
+        /* =========================
+           LIVE EVENTS
+        ========================= */
+
+        function updateEvents(data) {
+
+            const container =
+                document.getElementById(
+                    "eventsList"
+                );
+
+
+            const events = [];
+
+
+            /* Security alerts */
+
+            data.alerts.forEach(alert => {
+
+                events.push({
+
+                    type: "alert",
+
+                    title:
+                        alert.alert_type,
+
+                    detail:
+                        alert.description,
+
+                    time:
+                        alert.alert_time
+
+                });
+
+            });
+
+
+            /* Activity logs */
+
+            data.activities.forEach(activity => {
+
+                events.push({
+
+                    type: "activity",
+
+                    title:
+                        activity.action,
+
+                    detail:
+                        (activity.username ||
+                            "Unknown user")
+
+                        + " • " +
+
+                        (activity.ip_address ||
+                            "Unknown IP"),
+
+                    time:
+                        activity.log_time
+
+                });
+
+            });
+
+
+            if (!events.length) {
+
+                container.innerHTML = `
+
+                    <div class="event">
+
+                        <div class="event-dot safe"></div>
+
+                        <div>
+
+                            <div class="event-title">
+                                No security events
+                            </div>
+
+                            <div class="event-detail">
+                                System currently has no recorded activity
+                            </div>
+
+                        </div>
+
+                        <div class="event-time">
+                            —
+                        </div>
+
+                    </div>
+
+                `;
+
+                return;
+            }
+
+
+            /* Newest events first */
+
+            events.sort(
+                (a, b) =>
+                    new Date(b.time) -
+                    new Date(a.time)
+            );
+
+
+            container.innerHTML =
+
+                events
+                    .slice(0, 12)
+                    .map(event => {
+
+                        return `
+
+                            <div class="event">
+
+                                <div
+                                    class="event-dot ${
+                                        event.type === "alert"
+                                            ? "alert"
+                                            : "safe"
+                                    }"
+                                ></div>
+
+
+                                <div>
+
+                                    <div class="event-title">
+                                        ${escapeHtml(
+                                            event.title
+                                        )}
+                                    </div>
+
+
+                                    <div class="event-detail">
+                                        ${escapeHtml(
+                                            event.detail
+                                        )}
+                                    </div>
+
+                                </div>
+
+
+                                <div class="event-time">
+                                    ${escapeHtml(
+                                        event.time
+                                    )}
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    })
+                    .join("");
+        }
+
+
+        /* =========================
+           SUSPICIOUS IPs
+        ========================= */
+
+        function updateIPs(ips) {
+
+            const container =
+                document.getElementById(
+                    "ipList"
+                );
+
+
+            if (!ips.length) {
+
+                container.innerHTML = `
+
+                    <div class="ip-row">
+
+                        <div class="ip-address">
+                            No suspicious IPs
+                        </div>
+
+                        <div class="ip-count">
+                            CLEAR
+                        </div>
+
+                    </div>
+
+                `;
+
+                return;
+            }
+
+
+            container.innerHTML =
+
+                ips.map(ip => {
+
+                    return `
+
+                        <div class="ip-row">
+
+                            <div class="ip-address">
+                                ${escapeHtml(
+                                    ip.ip_address
+                                )}
+                            </div>
+
+                            <div class="ip-count">
+                                ${escapeHtml(
+                                    ip.failed_attempts
+                                )}
+                                FAILURES
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }).join("");
+        }
+
+
+        /* =========================
+           LOAD DASHBOARD
+        ========================= */
+
+        async function loadDashboard() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/dashboard",
+                        {
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "API error"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (data.error) {
+
+                    throw new Error(
+                        data.error
+                    );
+
+                }
+
+
+                updateStats(data);
+
+                updateUsers(
+                    data.users
+                );
+
+                updateEvents(data);
+
+                updateIPs(
+                    data.suspicious_ips
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Dashboard error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =========================
+           INITIAL LOAD
+        ========================= */
+
+        loadDashboard();
+
+
+        /* =========================
+           AUTO REFRESH
+        ========================= */
+
+        setInterval(
+            loadDashboard,
+            5000
+        );
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BackDoor — Create Account</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                radial-gradient(circle at 15% 20%, rgba(255,255,255,.055), transparent 28%),
+                radial-gradient(circle at 85% 80%, rgba(255,255,255,.035), transparent 30%),
+                #070809;
+
+            color: white;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "Segoe UI",
+                sans-serif;
+
+            overflow: hidden;
+        }
+
+        .ambient {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            pointer-events: none;
+        }
+
+        .ambient.one {
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,.055);
+            top: -140px;
+            left: -100px;
+        }
+
+        .ambient.two {
+            width: 350px;
+            height: 350px;
+            background: rgba(255,255,255,.035);
+            right: -160px;
+            bottom: -160px;
+        }
+
+        .signup-card {
+            position: relative;
+            z-index: 2;
+
+            width: 450px;
+            max-width: calc(100% - 35px);
+
+            padding: 38px 43px;
+
+            border-radius: 32px;
+
+            background: rgba(24,25,27,.67);
+
+            border: 1px solid rgba(255,255,255,.10);
+
+            box-shadow:
+                0 40px 100px rgba(0,0,0,.60),
+                inset 0 1px 1px rgba(255,255,255,.07);
+
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+        }
+
+        .brand {
+            text-align: center;
+        }
+
+        .brand h1 {
+            font-size: 32px;
+            letter-spacing: 6px;
+        }
+
+        .brand p {
+            margin-top: 8px;
+            color: #707174;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .access-status {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+
+            margin: 25px 0 22px;
+
+            color: #858589;
+            font-size: 10px;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #aaa;
+        }
+
+        .field {
+            margin-bottom: 13px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+
+            color: #858589;
+            font-size: 10px;
+            letter-spacing: 1.2px;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            height: 49px;
+
+            padding: 0 50px 0 17px;
+
+            border: 1px solid rgba(255,255,255,.09);
+            border-radius: 15px;
+
+            outline: none;
+
+            background: rgba(255,255,255,.045);
+
+            color: white;
+            font-size: 13px;
+
+            transition: .2s;
+        }
+
+        input::placeholder {
+            color: #505155;
+        }
+
+        input:focus {
+            border-color: rgba(255,255,255,.23);
+            background: rgba(255,255,255,.065);
+        }
+
+        .eye {
+            position: absolute;
+
+            right: 13px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 30px;
+            height: 30px;
+
+            border: 0;
+            background: transparent;
+
+            color: #66686b;
+
+            cursor: pointer;
+        }
+
+        .eye:hover {
+            color: #ddd;
+        }
+
+        .eye svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 11px;
+
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 12px;
+
+            background: rgba(255,255,255,.045);
+
+            color: #aaa;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .submit {
+            width: 100%;
+            height: 52px;
+
+            margin-top: 5px;
+
+            border: 0;
+            border-radius: 15px;
+
+            background: #f1f1f1;
+            color: #090909;
+
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .7px;
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+        .submit:hover {
+            background: #fff;
+            transform: translateY(-1px);
+        }
+
+        .login {
+            margin-top: 21px;
+
+            text-align: center;
+
+            color: #66686b;
+            font-size: 12px;
+        }
+
+        .login a {
+            color: #d5d5d5;
+            text-decoration: none;
+        }
+
+        .login a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 22px;
+
+            text-align: center;
+
+            color: #393a3d;
+
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        @media(max-width:500px) {
+            .signup-card {
+                padding: 30px 24px;
+            }
+
+            .brand h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+
+    <main class="signup-card">
+
+        <div class="brand">
+            <h1>BACKDOOR</h1>
+            <p>Cyber Security Operations Center</p>
+        </div>
+
+        <div class="access-status">
+            <span class="status-dot"></span>
+            New Security Identity
+        </div>
+
+        {% if message %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="/signup">
+
+            <div class="field">
+                <label>USERNAME</label>
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Choose username"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>EMAIL</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter email address"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>PASSWORD</label>
+
+                <div class="input-box">
+
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder="Create password"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="eye"
+                        onclick="togglePassword('password','eye1')"
+                    >
+                        <svg
+                            id="eye1"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/>
+                            <circle cx="12" cy="12" r="2.7"/>
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+
+            <div class="field">
+                <label>CONFIRM PASSWORD</label>
+
+                <div class="input-box">
+
+                    <input
+                        id="confirm_password"
+                        type="password"
+                        name="confirm_password"
+                        placeholder="Confirm password"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="eye"
+                        onclick="togglePassword('confirm_password','eye2')"
+                    >
+                        <svg
+                            id="eye2"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/>
+                            <circle cx="12" cy="12" r="2.7"/>
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+
+            <button class="submit" type="submit">
+                CREATE SECURITY ACCOUNT
+            </button>
+
+        </form>
+
+        <div class="login">
+            Already have an account?
+            <a href="/login">Return to login</a>
+        </div>
+
+        <div class="footer">
+            BackDoor Security Monitoring System
+        </div>
+
+    </main>
+
+    <script>
+        function togglePassword(inputId, iconId) {
+
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === "password") {
+
+                input.type = "text";
+
+                icon.innerHTML = `
+                    <path d="M3 3l18 18"/>
+                    <path d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6.5 0 10 6 10 6a18 18 0 0 1-3.1 3.8"/>
+                    <path d="M6.2 6.3C3.5 8 2 12 2 12s3.5 6 10 6c1.4 0 2.7-.3 3.8-.8"/>
+                `;
+
+            } else {
+
+                input.type = "password";
+
+                icon.innerHTML = `
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/>
+                    <circle cx="12" cy="12" r="2.7"/>
+                `;
+            }
+        }
+    </script>
+
+</body>
+</html>

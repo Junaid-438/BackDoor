@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BackDoor — User Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #070809;
+            --panel: rgba(22,24,27,.68);
+            --border: rgba(255,255,255,.09);
+
+            --text: #f1f1f3;
+            --white: #ffffff;
+            --light: #d6d6d9;
+            --muted: #999ba0;
+            --dim: #707278;
+
+            --green: #8ea99a;
+            --red: #b88686;
+            --yellow: #aaa083;
+        }
+
+
+        /* =========================
+           BODY
+        ========================= */
+
+        body {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 15% 0%,
+                    rgba(255,255,255,.025),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 90% 70%,
+                    rgba(255,255,255,.018),
+                    transparent 30%
+                ),
+                var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "Segoe UI",
+                sans-serif;
+
+            overflow-x: hidden;
+        }
+
+
+        /* =========================
+           SCROLLBAR
+        ========================= */
+
+        ::-webkit-scrollbar {
+            width: 9px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #090a0c;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #4a4d52,
+                    #202226
+                );
+
+            border: 2px solid #090a0c;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #62656b;
+        }
+
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+
+            height: 76px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 32px;
+
+            background: rgba(8,9,10,.82);
+
+            border-bottom:
+                1px solid rgba(255,255,255,.08);
+
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            color: #f4f4f5;
+
+            font-size: 16px;
+            font-weight: 700;
+
+            letter-spacing: 3px;
+        }
+
+        .brand span {
+            color: #777a80;
+
+            font-size: 9px;
+            font-weight: 500;
+
+            letter-spacing: 1.5px;
+
+            text-transform: uppercase;
+        }
+
+        .top-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+
+            padding: 9px 14px;
+
+            border-radius: 11px;
+
+            background:
+                rgba(255,255,255,.045);
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            color: #b7babf;
+
+            font-size: 10px;
+
+            letter-spacing: .8px;
+
+            text-transform: uppercase;
+        }
+
+        .logout {
+            padding: 9px 14px;
+
+            border-radius: 11px;
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            background: transparent;
+
+            color: #a6a8ad;
+
+            font-size: 10px;
+
+            text-decoration: none;
+
+            letter-spacing: .8px;
+
+            text-transform: uppercase;
+
+            transition: .2s;
+        }
+
+        .logout:hover {
+            color: white;
+
+            background:
+                rgba(255,255,255,.06);
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container {
+            width: min(1500px, calc(100% - 50px));
+
+            margin: 0 auto;
+
+            padding: 32px 0 60px;
+        }
+
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            padding: 0;
+
+            margin-bottom: 28px;
+        }
+
+        .hero h1 {
+            color: #f4f4f5;
+
+            font-size: 30px;
+            font-weight: 600;
+
+            letter-spacing: -.8px;
+
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            color: #9a9ca1;
+        }
+
+        .hero p {
+            margin-top: 9px;
+
+            color: #9a9ca1;
+
+            font-size: 12px;
+        }
+
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0,1fr));
+
+            gap: 14px;
+
+            margin-bottom: 14px;
+        }
+
+        .card {
+            position: relative;
+
+            overflow: hidden;
+
+            border-radius: 23px;
+
+            padding: 21px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.055),
+                    rgba(255,255,255,.018)
+                );
+
+            border:
+                1px solid rgba(255,255,255,.075);
+
+            box-shadow:
+                inset 0 1px 1px rgba(255,255,255,.035),
+                0 20px 50px rgba(0,0,0,.16);
+
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+
+            transition: .2s;
+        }
+
+        .card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 130px;
+            height: 130px;
+
+            right: -65px;
+            bottom: -80px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.025);
+
+            filter: blur(5px);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                inset 0 1px 1px rgba(255,255,255,.045),
+                0 25px 60px rgba(0,0,0,.20);
+        }
+
+        .card-label {
+            color: #a2a4a9;
+
+            font-size: 10px;
+            font-weight: 500;
+
+            letter-spacing: 1.3px;
+
+            text-transform: uppercase;
+        }
+
+        .card-value {
+            position: relative;
+
+            margin-top: 17px;
+
+            color: #ffffff;
+
+            font-size: 36px;
+            font-weight: 500;
+
+            letter-spacing: -1px;
+        }
+
+
+        /* =========================
+           TWO COLUMN SECTIONS
+        ========================= */
+
+        .section-grid {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 14px;
+
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            min-height: 62px;
+
+            display: flex;
+            align-items: center;
+
+            color: #eeeeef;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            letter-spacing: 1.1px;
+
+            text-transform: uppercase;
+
+            margin-bottom: 0;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
+
+            margin-left: -21px;
+            margin-right: -21px;
+
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+
+        /* =========================
+           ACCOUNT INFORMATION
+        ========================= */
+
+        .info {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 8px;
+
+            padding-top: 14px;
+        }
+
+        .info-item {
+            padding: 15px;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            border:
+                1px solid rgba(255,255,255,.045);
+        }
+
+        .info-item small {
+            display: block;
+
+            color: #92959b;
+
+            font-size: 9px;
+
+            margin-bottom: 7px;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+        .info-item strong {
+            color: #d4d5d8;
+
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 15px 18px;
+
+            text-align: left;
+
+            color: #92959b;
+
+            font-size: 9px;
+            font-weight: 600;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
+
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 15px 18px;
+
+            color: #d4d5d8;
+
+            font-size: 12px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.045);
+
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .success {
+            color: #a9c0b3;
+
+            font-weight: 500;
+        }
+
+        .failed {
+            color: #d0a0a0;
+
+            font-weight: 500;
+        }
+
+
+        /* =========================
+           ACTIVITY / ALERTS
+        ========================= */
+
+        .activity,
+        .alert-box {
+            padding: 17px 19px;
+
+            margin-bottom: 0;
+
+            border-radius: 0;
+
+            background: transparent;
+
+            border: none;
+
+            border-bottom:
+                1px solid rgba(255,255,255,.045);
+        }
+
+        .activity:last-child,
+        .alert-box:last-child {
+            border-bottom: none;
+        }
+
+        .activity-action,
+        .alert-title {
+            color: #ffffff;
+
+            font-weight: 500;
+
+            font-size: 13px;
+        }
+
+        .activity-meta,
+        .alert-description,
+        .alert-time {
+            margin-top: 6px;
+
+            color: #aeb0b5;
+
+            font-size: 11px;
+        }
+
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty {
+            padding: 20px;
+
+            text-align: center;
+
+            color: #686b70;
+
+            font-size: 10px;
+
+            letter-spacing: .5px;
+        }
+
+
+        /* =========================
+           SECURITY CARD
+        ========================= */
+
+        .security-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 8px;
+
+            padding-top: 14px;
+        }
+
+        .security-item {
+            padding: 16px 10px;
+
+            text-align: center;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            border:
+                1px solid rgba(255,255,255,.045);
+        }
+
+        .security-item small {
+            display: block;
+
+            color: #92959b;
+
+            margin-bottom: 7px;
+
+            font-size: 9px;
+
+            letter-spacing: .8px;
+
+            text-transform: uppercase;
+        }
+
+        .security-item strong {
+            color: #d1d3d6;
+
+            font-size: 12px;
+
+            font-weight: 500;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media(max-width:1000px) {
+
+            .grid {
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+
+            .section-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+        }
+
+
+        @media(max-width:650px) {
+
+            .topbar {
+                padding: 0 17px;
+            }
+
+            .brand span {
+                display: none;
+            }
+
+            .top-user {
+                gap: 7px;
+            }
+
+            .status {
+                display: none;
+            }
+
+            .container {
+                width: calc(100% - 25px);
+
+                padding-top: 22px;
+            }
+
+            .grid {
+                grid-template-columns:
+                    1fr 1fr;
+
+                gap: 9px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .card-value {
+                font-size: 29px;
+            }
+
+            .info {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .security-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .section-title {
+                margin-left: -16px;
+                margin-right: -16px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- =========================
+         TOP BAR
+    ========================= -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            BackDoor
+
+            <span>
+                Security Portal
+            </span>
+
+        </div>
+
+
+        <div class="top-user">
+
+            <span
+                class="status"
+                id="topStatus"
+            >
+                Loading...
+            </span>
+
+
+            <span id="topUsername">
+                Loading...
+            </span>
+
+
+            <a
+                class="logout"
+                href="/logout"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+
+        <!-- =========================
+             HERO
+        ========================= -->
+
+        <section class="hero">
+
+            <h1>
+
+                Welcome,
+
+                <span id="heroUsername">
+                    Loading...
+                </span>
+
+            </h1>
+
+
+            <p>
+                Personal security overview and account activity.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             SUMMARY
+        ========================= -->
+
+        <section class="grid">
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    Account Status
+                </div>
+
+                <div
+                    class="card-value"
+                    id="accountStatus"
+                >
+                    Loading...
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    Failed Login Attempts
+                </div>
+
+                <div
+                    class="card-value"
+                    id="failedAttempts"
+                >
+                    Loading...
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    Security Alerts
+                </div>
+
+                <div
+                    class="card-value"
+                    id="securityAlerts"
+                >
+                    Loading...
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    Last Failed IP
+                </div>
+
+                <div
+                    class="card-value"
+                    id="lastFailedIp"
+                >
+                    Loading...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             ACCOUNT + SECURITY
+        ========================= -->
+
+        <section class="section-grid">
+
+
+            <!-- ACCOUNT INFORMATION -->
+
+            <div class="card">
+
+                <div class="section-title">
+                    Account Information
+                </div>
+
+
+                <div class="info">
+
+
+                    <div class="info-item">
+
+                        <small>
+                            Username
+                        </small>
+
+                        <strong id="username">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <small>
+                            Email
+                        </small>
+
+                        <strong id="email">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <small>
+                            User ID
+                        </small>
+
+                        <strong id="userId">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <small>
+                            Role
+                        </small>
+
+                        <strong id="userRole">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <small>
+                            Member Since
+                        </small>
+
+                        <strong id="memberSince">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <small>
+                            Account Status
+                        </small>
+
+                        <strong id="accountStatusInfo">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY STATUS -->
+
+            <div class="card">
+
+                <div class="section-title">
+                    Security Status
+                </div>
+
+
+                <div class="security-grid">
+
+
+                    <div class="security-item">
+
+                        <small>
+                            Account
+                        </small>
+
+                        <strong id="securityAccount">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="security-item">
+
+                        <small>
+                            Failed Attempts
+                        </small>
+
+                        <strong id="securityFailed">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="security-item">
+
+                        <small>
+                            Last Failed IP
+                        </small>
+
+                        <strong id="securityIp">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =========================
+             LOGIN HISTORY + ACTIVITY
+        ========================= -->
+
+        <section class="section-grid">
+
+
+            <!-- LOGIN HISTORY -->
+
+            <div class="card">
+
+                <div class="section-title">
+                    Login History
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Time
+                                </th>
+
+                                <th>
+                                    IP Address
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="loginHistory">
+
+                            <tr>
+
+                                <td
+                                    colspan="3"
+                                    class="empty"
+                                >
+                                    Loading...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- RECENT ACTIVITY -->
+
+            <div class="card">
+
+                <div class="section-title">
+                    Recent Activity
+                </div>
+
+
+                <div id="activityList">
+
+                    <div class="empty">
+                        Loading...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =========================
+             SECURITY ALERTS
+        ========================= -->
+
+        <section>
+
+            <div class="card">
+
+                <div class="section-title">
+                    Security Alerts
+                </div>
+
+
+                <div id="alertsList">
+
+                    <div class="empty">
+                        Loading...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+
+        async function loadUserDashboard() {
+
+            try {
+
+
+                const response = await fetch(
+                    "/api/user-dashboard",
+                    {
+                        method: "GET",
+
+                        credentials: "same-origin",
+
+                        cache: "no-store"
+                    }
+                );
+
+
+                if (!response.ok) {
+
+                    console.error(
+                        "API error:",
+                        response.status
+                    );
+
+                    return;
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "BackDoor dashboard data:",
+                    data
+                );
+
+
+                const user =
+                    data.user;
+
+
+                /* =========================
+                   USER INFORMATION
+                ========================= */
+
+
+                document.getElementById(
+                    "topUsername"
+                ).textContent =
+                    user.username;
+
+
+                document.getElementById(
+                    "heroUsername"
+                ).textContent =
+                    user.username;
+
+
+                document.getElementById(
+                    "topStatus"
+                ).textContent =
+                    user.account_status;
+
+
+                document.getElementById(
+                    "accountStatus"
+                ).textContent =
+                    user.account_status;
+
+
+                document.getElementById(
+                    "accountStatusInfo"
+                ).textContent =
+                    user.account_status;
+
+
+                document.getElementById(
+                    "failedAttempts"
+                ).textContent =
+                    user.failed_attempts;
+
+
+                document.getElementById(
+                    "userRole"
+                ).textContent =
+                    user.role;
+
+
+                document.getElementById(
+                    "username"
+                ).textContent =
+                    user.username;
+
+
+                document.getElementById(
+                    "email"
+                ).textContent =
+                    user.email;
+
+
+                document.getElementById(
+                    "userId"
+                ).textContent =
+                    user.user_id;
+
+
+                document.getElementById(
+                    "lastFailedIp"
+                ).textContent =
+                    user.last_failed_ip || "None";
+
+
+                /* =========================
+                   SECURITY STATUS
+                ========================= */
+
+
+                document.getElementById(
+                    "securityAccount"
+                ).textContent =
+                    user.account_status;
+
+
+                document.getElementById(
+                    "securityFailed"
+                ).textContent =
+                    user.failed_attempts;
+
+
+                document.getElementById(
+                    "securityIp"
+                ).textContent =
+                    user.last_failed_ip || "None";
+
+
+                document.getElementById(
+                    "securityAlerts"
+                ).textContent =
+                    data.alerts.length;
+
+
+                /* =========================
+                   MEMBER SINCE
+                ========================= */
+
+
+                if (user.created_at) {
+
+                    document.getElementById(
+                        "memberSince"
+                    ).textContent =
+                        user.created_at.split(" ")[0];
+
+                } else {
+
+                    document.getElementById(
+                        "memberSince"
+                    ).textContent =
+                        "Unknown";
+
+                }
+
+
+                /* =========================
+                   LOGIN HISTORY
+                ========================= */
+
+
+                const loginHistory =
+                    document.getElementById(
+                        "loginHistory"
+                    );
+
+
+                loginHistory.innerHTML = "";
+
+
+                if (
+                    !data.login_history ||
+                    data.login_history.length === 0
+                ) {
+
+
+                    loginHistory.innerHTML = `
+
+                        <tr>
+
+                            <td
+                                colspan="3"
+                                class="empty"
+                            >
+                                No login history found.
+                            </td>
+
+                        </tr>
+
+                    `;
+
+
+                } else {
+
+
+                    data.login_history.forEach(
+                        login => {
+
+
+                            const row =
+                                document.createElement(
+                                    "tr"
+                                );
+
+
+                            const statusClass =
+                                login.success == 1
+                                    ? "success"
+                                    : "failed";
+
+
+                            const statusText =
+                                login.success == 1
+                                    ? "Successful"
+                                    : "Failed";
+
+
+                            row.innerHTML = `
+
+                                <td>
+                                    ${login.attempt_time}
+                                </td>
+
+                                <td>
+                                    ${login.ip_address || "Unknown"}
+                                </td>
+
+                                <td class="${statusClass}">
+                                    ${statusText}
+                                </td>
+
+                            `;
+
+
+                            loginHistory.appendChild(
+                                row
+                            );
+
+                        }
+                    );
+
+                }
+
+
+                /* =========================
+                   RECENT ACTIVITY
+                ========================= */
+
+
+                const activityList =
+                    document.getElementById(
+                        "activityList"
+                    );
+
+
+                activityList.innerHTML = "";
+
+
+                if (
+                    !data.activities ||
+                    data.activities.length === 0
+                ) {
+
+
+                    activityList.innerHTML = `
+
+                        <div class="empty">
+                            No activity recorded.
+                        </div>
+
+                    `;
+
+
+                } else {
+
+
+                    data.activities.forEach(
+                        activity => {
+
+
+                            const item =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            item.className =
+                                "activity";
+
+
+                            item.innerHTML = `
+
+                                <div class="activity-action">
+                                    ${activity.action}
+                                </div>
+
+
+                                <div class="activity-meta">
+
+                                    IP:
+                                    ${activity.ip_address || "Unknown"}
+
+                                    &nbsp; • &nbsp;
+
+                                    ${activity.log_time}
+
+                                </div>
+
+                            `;
+
+
+                            activityList.appendChild(
+                                item
+                            );
+
+                        }
+                    );
+
+                }
+
+
+                /* =========================
+                   SECURITY ALERTS
+                ========================= */
+
+
+                const alertsList =
+                    document.getElementById(
+                        "alertsList"
+                    );
+
+
+                alertsList.innerHTML = "";
+
+
+                if (
+                    !data.alerts ||
+                    data.alerts.length === 0
+                ) {
+
+
+                    alertsList.innerHTML = `
+
+                        <div class="empty">
+                            No security alerts.
+                        </div>
+
+                    `;
+
+
+                } else {
+
+
+                    data.alerts.forEach(
+                        alert => {
+
+
+                            const item =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            item.className =
+                                "alert-box";
+
+
+                            item.innerHTML = `
+
+                                <div class="alert-title">
+                                    ${alert.alert_type}
+                                </div>
+
+
+                                <div class="alert-description">
+
+                                    ${alert.description ||
+                                    "No description available."}
+
+                                </div>
+
+
+                                <div class="alert-time">
+                                    ${alert.alert_time}
+                                </div>
+
+                            `;
+
+
+                            alertsList.appendChild(
+                                item
+                            );
+
+                        }
+                    );
+
+                }
+
+
+            }
+
+
+            catch (error) {
+
+                console.error(
+                    "BackDoor user dashboard error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =========================
+           INITIAL LOAD
+        ========================= */
+
+        loadUserDashboard();
+
+
+        /* =========================
+           AUTO REFRESH
+        ========================= */
+
+        setInterval(
+            loadUserDashboard,
+            5000
+        );
+
+
+    </script>
+
+</body>
+</html>
